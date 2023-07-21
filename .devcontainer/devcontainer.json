@@ -1,0 +1,5 @@
+{
+  "dockerComposeFile": ["docker-compose.yml"],
+  "service": "rust_devcontainer",
+  "workspaceFolder": "/app"
+}

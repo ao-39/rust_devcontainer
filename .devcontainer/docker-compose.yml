@@ -1,0 +1,8 @@
+services:
+  rust_devcontainer:
+    image: rust:1.71.0-bookworm
+    restart: always
+    tty: true
+    volumes:
+      - ../app:/app
+    working_dir: /app
