@@ -4,7 +4,15 @@
   "workspaceFolder": "/workspace",
   "customizations": {
     "vscode": {
-      "extensions": ["rust-lang.rust-analyzer"]
+      "extensions": [
+				"rust-lang.rust-analyzer",
+				"vadimcn.vscode-lldb",
+				"serayuzgur.crates",
+				"JScearcy.rust-doc-viewer",
+				"Swellaby.vscode-rust-test-adapter",
+				"tamasfe.even-better-toml",
+				"ritwickdey.LiveServer"
+			]
     }
   }
 }
