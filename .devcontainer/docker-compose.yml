@@ -4,5 +4,5 @@ services:
     restart: always
     tty: true
     volumes:
-      - ../app:/app
-    working_dir: /app
+      - ../:/workspace
+    working_dir: /workspace
