@@ -8,6 +8,8 @@ services:
     volumes:
       - ../:/workspace
     working_dir: /workspace
+    environment:
+      TZ: Asia/Tokyo
   db:
     image: postgres:13
     volumes:
