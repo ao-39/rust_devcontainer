@@ -12,6 +12,9 @@
         "Swellaby.vscode-rust-test-adapter",
         "tamasfe.even-better-toml",
         "ritwickdey.LiveServer"
+      ],
+      "rust-analyzer.linkedProjects": [
+        "./app/Cargo.toml"
       ]
     }
   }
