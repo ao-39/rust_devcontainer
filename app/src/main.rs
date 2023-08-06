@@ -1,5 +1,7 @@
+mod common;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenvy::dotenv()?;
-    println!("Hello, world!");
+    common::logger::init();
+    tracing::info!("Hello, world!");
     Ok(())
 }
