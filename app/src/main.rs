@@ -1,7 +1,12 @@
-mod common;
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    dotenvy::dotenv()?;
-    common::logger::init();
-    tracing::info!("Hello, world!");
-    Ok(())
+use axum::{routing::get, Router};
+
+async fn hello_world() -> &'static str {
+    "Hello, world!"
+}
+
+#[shuttle_runtime::main]
+async fn axum() -> shuttle_axum::ShuttleAxum {
+    let router = Router::new().route("/", get(hello_world));
+
+    Ok(router.into())
 }
