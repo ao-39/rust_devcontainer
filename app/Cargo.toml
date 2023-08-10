@@ -6,6 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+axum = "0.6.20"
 dotenvy = "0.15.7"
 tracing = "0.1.37"
 tracing-subscriber = { version= "0.3.17", features = ["std", "env-filter", "time", "local-time"]}
+tokio = { version = "1.30.0", features = ["full"] }
+utoipa = "3.4.4"
+utoipa-swagger-ui = { version = "*", features = ["axum"] }
+utoipa-redoc = { version = "*", features = ["axum"] }
+utoipa-rapidoc = { version = "*", features = ["axum"] }
