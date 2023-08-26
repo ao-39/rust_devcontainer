@@ -1,12 +1,19 @@
-use domain::object::{
-    chrono::Local, email_address::EmailAddress, rusty_ulid::Ulid, url::Url, UserDiscriminator,
-    UserName,
+use domain::{
+    entity::User,
+    object::{
+        chrono::Local, email_address::EmailAddress, rusty_ulid::Ulid, url::Url, UserDiscriminator,
+        UserName,
+    },
+    repository::IUserRepository,
 };
 
-pub struct UserApplicationService;
+pub struct UserApplicationService<T: IUserRepository> {
+    user_repository: T,
+}
 
 pub trait IUserApplicationService {
     fn register(
+        &self,
         discriminator: UserDiscriminator,
         name: UserName,
         email: EmailAddress,
@@ -14,14 +21,15 @@ pub trait IUserApplicationService {
     ) -> Result<domain::entity::User, Box<dyn std::error::Error>>;
 }
 
-impl IUserApplicationService for UserApplicationService {
+impl<T: IUserRepository> IUserApplicationService for UserApplicationService<T> {
     fn register(
+        &self,
         discriminator: UserDiscriminator,
         name: UserName,
         email: EmailAddress,
         web_page: Url,
-    ) -> Result<domain::entity::User, Box<dyn std::error::Error>> {
-        let user = domain::entity::User::new(
+    ) -> Result<User, Box<dyn std::error::Error>> {
+        let user = User::new(
             Ulid::generate(),
             discriminator,
             name,
@@ -30,10 +38,8 @@ impl IUserApplicationService for UserApplicationService {
             Local::now(),
             Local::now(),
         );
-        // 登録前チェック処理
 
-        // リポジトリに保存するなどの処理
-
+        self.user_repository.add(user.clone())?;
         Ok(user)
     }
 }

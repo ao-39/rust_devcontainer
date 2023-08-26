@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::object::{UserDiscriminator, UserName};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct User {
     pub id: Ulid,
     pub discriminator: UserDiscriminator,
