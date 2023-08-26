@@ -17,8 +17,8 @@ pub trait IUserApplicationService {
         discriminator: UserDiscriminator,
         name: UserName,
         email: EmailAddress,
-        web_page: Url,
-    ) -> Result<domain::entity::User, Box<dyn std::error::Error>>;
+        web_page: Option<Url>,
+    ) -> Result<User, Box<dyn std::error::Error>>;
 }
 
 impl<T: IUserRepository> IUserApplicationService for UserApplicationService<T> {
@@ -27,7 +27,7 @@ impl<T: IUserRepository> IUserApplicationService for UserApplicationService<T> {
         discriminator: UserDiscriminator,
         name: UserName,
         email: EmailAddress,
-        web_page: Url,
+        web_page: Option<Url>,
     ) -> Result<User, Box<dyn std::error::Error>> {
         let user = User::new(
             Ulid::generate(),

@@ -7,7 +7,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         domain::object::UserDiscriminator::new("john".to_string())?,
         domain::object::UserName::new("John Doe".to_string())?,
         email_address::EmailAddress::from_str("example@example.com")?,
-        url::Url::parse("https://example.com")?,
+        Some(url::Url::parse("https://example.com")?),
         chrono::Local::now(),
         chrono::Local::now(),
     );

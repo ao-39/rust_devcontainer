@@ -13,7 +13,7 @@ pub struct User {
     pub discriminator: UserDiscriminator,
     pub name: UserName,
     pub email: EmailAddress,
-    pub web_page: Url,
+    pub web_page: Option<Url>,
     pub created_at: DateTime<Local>,
     pub updated_at: DateTime<Local>,
 }
@@ -24,7 +24,7 @@ impl User {
         discriminator: UserDiscriminator,
         name: UserName,
         email: EmailAddress,
-        web_page: Url,
+        web_page: Option<Url>,
         created_at: DateTime<Local>,
         updated_at: DateTime<Local>,
     ) -> Self {
