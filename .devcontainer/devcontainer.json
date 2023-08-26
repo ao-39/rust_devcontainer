@@ -14,7 +14,10 @@
         "ritwickdey.LiveServer"
       ],
       "rust-analyzer.linkedProjects": [
-        "./app/Cargo.toml"
+        "./app/Cargo.toml",
+        "./app/api/Cargo.toml",
+        "./app/domain/Cargo.toml",
+        "./app/app_service/Cargo.toml"
       ]
     }
   }

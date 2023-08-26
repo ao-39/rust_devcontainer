@@ -1,0 +1,13 @@
+[package]
+name = "app"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+members = [".", "domain", "api", "app_service"]
+
+[dependencies]
+api = { path = "./api" }
+dotenvy = "0.15.7"
+tracing = "0.1.37"
+tracing-subscriber = { version = "0.3.17", features = ["std", "env-filter", "time", "local-time"]}

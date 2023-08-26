@@ -1,0 +1,9 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "./app/api/Cargo.toml",
+        "./app/api/Cargo.toml",
+        "./app/domain/Cargo.toml",
+        "./app/domain/Cargo.toml"
+    ],
+    "rust-analyzer.showUnlinkedFileNotification": false
+}
