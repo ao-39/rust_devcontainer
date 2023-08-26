@@ -8,10 +8,12 @@ use domain::{
 };
 
 pub struct UserApplicationService<T: IUserRepository> {
-    pub user_repository: T,
+    user_repository: T,
 }
 
-pub trait IUserApplicationService {
+pub trait IUserApplicationService<T: IUserRepository> {
+    fn new(user_repostitory: T) -> Self;
+
     fn register(
         &self,
         discriminator: UserDiscriminator,
@@ -21,7 +23,13 @@ pub trait IUserApplicationService {
     ) -> Result<User, Box<dyn std::error::Error>>;
 }
 
-impl<T: IUserRepository> IUserApplicationService for UserApplicationService<T> {
+impl<T: IUserRepository> IUserApplicationService<T> for UserApplicationService<T> {
+    fn new(user_repostitory: T) -> Self {
+        Self {
+            user_repository: user_repostitory,
+        }
+    }
+
     fn register(
         &self,
         discriminator: UserDiscriminator,

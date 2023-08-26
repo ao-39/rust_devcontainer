@@ -9,9 +9,7 @@ use domain::{
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let user_application_service = UserApplicationService {
-        user_repository: ExampleUserRepository {},
-    };
+    let user_application_service = UserApplicationService::new(ExampleUserRepository);
 
     user_application_service.register(
         UserDiscriminator::new("john".to_string())?,
@@ -19,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         email_address::EmailAddress::from_str("example@example.com")?,
         Some(url::Url::parse("https://example.com")?),
     )?;
-    
+
     Ok(())
 }
 
