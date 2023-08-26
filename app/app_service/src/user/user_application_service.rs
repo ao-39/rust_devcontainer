@@ -8,7 +8,7 @@ use domain::{
 };
 
 pub struct UserApplicationService<T: IUserRepository> {
-    user_repository: T,
+    pub user_repository: T,
 }
 
 pub trait IUserApplicationService {
