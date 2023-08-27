@@ -17,7 +17,8 @@
         "./app/Cargo.toml",
         "./app/api/Cargo.toml",
         "./app/domain/Cargo.toml",
-        "./app/app_service/Cargo.toml"
+        "./app/app_service/Cargo.toml",
+        "./app/infra/migration/Cargo.toml"
       ]
     }
   }
