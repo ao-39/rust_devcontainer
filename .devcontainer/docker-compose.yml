@@ -10,3 +10,9 @@ services:
     working_dir: /workspace
     environment:
       TZ: Asia/Tokyo
+  db:
+    image: postgres:13
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
