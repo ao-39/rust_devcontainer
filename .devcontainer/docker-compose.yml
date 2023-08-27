@@ -1,8 +1,11 @@
 services:
   rust_devcontainer:
+    container_name: rust
     build:
       context: .
       dockerfile: Dockerfile
+    networks:
+      - default
     restart: always
     tty: true
     volumes:
@@ -11,8 +14,20 @@ services:
     environment:
       TZ: Asia/Tokyo
   db:
+    container_name: db
     image: postgres:13
+    networks:
+      - default
     volumes:
       - db_volume:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: db
+volumes:
+  db_volume:
+networks:
+  default:
+    name: rust_devcontainer
