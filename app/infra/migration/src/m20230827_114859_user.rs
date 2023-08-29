@@ -19,17 +19,17 @@ impl MigrationTrait for Migration {
                             .unique_key(),
                     )
                     .col(ColumnDef::new(User::Name).text().not_null())
-                    .col(ColumnDef::new(User::Email).text().not_null())
+                    .col(ColumnDef::new(User::Email).text().not_null().unique_key())
                     .col(ColumnDef::new(User::WebPage).text())
                     .col(
                         ColumnDef::new(User::CreatedAt)
                             .timestamp_with_time_zone()
-                            .extra("DEFAULT NOW()"),
+                            .default(Expr::current_timestamp()),
                     )
                     .col(
                         ColumnDef::new(User::UpdatedAt)
                             .timestamp_with_time_zone()
-                            .extra("DEFAULT NOW()"),
+                            .default(Expr::current_timestamp()),
                     )
                     .to_owned(),
             )
