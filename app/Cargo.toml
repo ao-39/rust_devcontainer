@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [workspace]
-members = [".", "domain", "api", "app_service"]
+members = [".", "domain", "api", "app_service", "infra/migration"]
 
 [dependencies]
 api = { path = "./api" }
