@@ -2,12 +2,12 @@ use async_trait::async_trait;
 use domain::repository::IUserRepository;
 use sea_orm::{ActiveModelTrait, DatabaseConnection, Set};
 
-pub struct UserRepository<'a> {
-    db: &'a DatabaseConnection,
+pub struct UserRepository {
+    db: DatabaseConnection,
 }
 
 #[async_trait]
-impl IUserRepository for UserRepository<'_> {
+impl IUserRepository for UserRepository {
     fn find_by_id(
         &self,
         user_id: domain::object::rusty_ulid::Ulid,
@@ -31,8 +31,14 @@ impl IUserRepository for UserRepository<'_> {
             created_at: Set(user.created_at.into()),
             updated_at: Set(user.updated_at.into()),
         }
-        .save(self.db)
+        .insert(&self.db)
         .await?;
         Ok(())
+    }
+}
+
+impl UserRepository {
+    pub fn new(db: DatabaseConnection) -> Self {
+        Self { db }
     }
 }

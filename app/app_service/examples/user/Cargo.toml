@@ -9,4 +9,4 @@ edition = "2021"
 domain = { path = "../../../domain" }
 app_service = { path = "../../"}
 async-trait = "0.1.73"
-tokio = { version = "1.32.0", features = ["macros"] }
+tokio = { version = "1", features = ["full"] }
