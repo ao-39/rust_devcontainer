@@ -1,3 +1,4 @@
+use async_trait::async_trait;
 use std::str::FromStr;
 
 use app_service::user::user_application_service::IUserApplicationService;
@@ -8,23 +9,27 @@ use domain::{
     repository::IUserRepository,
 };
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let user_application_service = UserApplicationService::new(ExampleUserRepository);
 
-    user_application_service.register(
-        UserDiscriminator::new("john".to_string())?,
-        UserName::new("John Doe".to_string())?,
-        email_address::EmailAddress::from_str("example@example.com")?,
-        Some(url::Url::parse("https://example.com")?),
-    )?;
+    user_application_service
+        .register(
+            UserDiscriminator::new("john".to_string())?,
+            UserName::new("John Doe".to_string())?,
+            email_address::EmailAddress::from_str("example@example.com")?,
+            Some(url::Url::parse("https://example.com")?),
+        )
+        .await?;
 
     Ok(())
 }
 
 struct ExampleUserRepository;
 
+#[async_trait]
 impl IUserRepository for ExampleUserRepository {
-    fn add(&self, user: User) -> Result<(), Box<dyn std::error::Error>> {
+    async fn add(&self, user: User) -> Result<(), Box<dyn std::error::Error>> {
         println!("add user: {:?}", user);
         Ok(())
     }

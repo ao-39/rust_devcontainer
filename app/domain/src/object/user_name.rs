@@ -12,3 +12,9 @@ impl UserName {
         }
     }
 }
+
+impl From<UserName> for String {
+    fn from(value: UserName) -> Self {
+        value.0
+    }
+}

@@ -15,3 +15,9 @@ impl UserDiscriminator {
         }
     }
 }
+
+impl From<UserDiscriminator> for String {
+    fn from(value: UserDiscriminator) -> Self {
+        value.0
+    }
+}

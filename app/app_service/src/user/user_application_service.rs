@@ -1,3 +1,4 @@
+use async_trait::async_trait;
 use domain::{
     entity::User,
     object::{
@@ -7,14 +8,15 @@ use domain::{
     repository::IUserRepository,
 };
 
-pub struct UserApplicationService<T: IUserRepository> {
+pub struct UserApplicationService<T: IUserRepository + Sync + Send> {
     user_repository: T,
 }
 
-pub trait IUserApplicationService<T: IUserRepository> {
+#[async_trait]
+pub trait IUserApplicationService<T: IUserRepository + Sync + Send> {
     fn new(user_repostitory: T) -> Self;
 
-    fn register(
+    async fn register(
         &self,
         discriminator: UserDiscriminator,
         name: UserName,
@@ -23,22 +25,24 @@ pub trait IUserApplicationService<T: IUserRepository> {
     ) -> Result<User, Box<dyn std::error::Error>>;
 }
 
-impl<T: IUserRepository> IUserApplicationService<T> for UserApplicationService<T> {
+#[async_trait]
+impl<T: IUserRepository + Sync + Send> IUserApplicationService<T> for UserApplicationService<T> {
     fn new(user_repostitory: T) -> Self {
         Self {
             user_repository: user_repostitory,
         }
     }
 
-    fn register(
+    async fn register(
         &self,
         discriminator: UserDiscriminator,
         name: UserName,
         email: EmailAddress,
         web_page: Option<Url>,
     ) -> Result<User, Box<dyn std::error::Error>> {
+        let ulid = Ulid::generate();
         let user = User::new(
-            Ulid::generate(),
+            ulid.clone(),
             discriminator,
             name,
             email,
@@ -47,7 +51,7 @@ impl<T: IUserRepository> IUserApplicationService<T> for UserApplicationService<T
             Local::now(),
         );
 
-        self.user_repository.add(user.clone())?;
+        self.user_repository.add(user.clone()).await?;
         Ok(user)
     }
 }
