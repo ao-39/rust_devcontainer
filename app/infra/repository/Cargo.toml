@@ -12,7 +12,6 @@ path = "src/lib.rs"
 domain = { path = "../../domain" }
 entity = { path = "../entity" }
 async-trait = "0.1.73"
-sqlx = "0.7.1"
 
 [dependencies.sea-orm]
 version = "0.12.2"

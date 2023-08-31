@@ -1,8 +1,12 @@
 use async_trait::async_trait;
-use domain::repository::{IUserRepository, UserRepositoryAddError};
+use domain::{
+    object::{rusty_ulid, UserDiscriminator},
+    repository::{IUserRepository, UserRepositoryAddError, UserRepositoryFindError},
+};
 
 use entity::implementations::prelude::DbErrUtils;
-use sea_orm::{ActiveModelTrait, DatabaseConnection};
+use sea_orm::prelude::*;
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 
 pub struct UserRepository {
     db: DatabaseConnection,
@@ -10,17 +14,39 @@ pub struct UserRepository {
 
 #[async_trait]
 impl IUserRepository for UserRepository {
-    fn find_by_id(
+    async fn find_by_id(
         &self,
-        user_id: domain::object::rusty_ulid::Ulid,
-    ) -> Result<domain::entity::User, Box<dyn std::error::Error>> {
-        todo!()
+        user_id: rusty_ulid::Ulid,
+    ) -> Result<domain::entity::User, UserRepositoryFindError> {
+        let res = entity::user::Entity::find_by_id(user_id.to_string())
+            .one(&self.db)
+            .await;
+
+        match res {
+            Err(_) => Err(UserRepositoryFindError::OtherError),
+            Ok(None) => Err(UserRepositoryFindError::NotFound),
+            Ok(Some(user)) => user
+                .try_into()
+                .map_err(|_| UserRepositoryFindError::DeserializeError),
+        }
     }
-    fn find_by_discriminator(
+
+    async fn find_by_discriminator(
         &self,
-        discriminator: domain::object::UserDiscriminator,
-    ) -> Result<domain::entity::User, Box<dyn std::error::Error>> {
-        todo!()
+        discriminator: UserDiscriminator,
+    ) -> Result<domain::entity::User, UserRepositoryFindError> {
+        let res = entity::user::Entity::find()
+            .filter(entity::user::Column::Discriminator.eq(Into::<String>::into(discriminator)))
+            .one(&self.db)
+            .await;
+
+        match res {
+            Err(_) => Err(UserRepositoryFindError::OtherError),
+            Ok(None) => Err(UserRepositoryFindError::NotFound),
+            Ok(Some(user)) => user
+                .try_into()
+                .map_err(|_| UserRepositoryFindError::DeserializeError),
+        }
     }
 
     async fn add(&self, user: domain::entity::User) -> Result<(), UserRepositoryAddError> {

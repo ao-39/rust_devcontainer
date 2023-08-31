@@ -6,11 +6,11 @@ use crate::{entity::User, object::UserDiscriminator};
 
 #[async_trait]
 pub trait IUserRepository {
-    fn find_by_id(&self, user_id: Ulid) -> Result<User, Box<dyn std::error::Error>>;
-    fn find_by_discriminator(
+    async fn find_by_id(&self, user_id: Ulid) -> Result<User, UserRepositoryFindError>;
+    async fn find_by_discriminator(
         &self,
         discriminator: UserDiscriminator,
-    ) -> Result<User, Box<dyn std::error::Error>>;
+    ) -> Result<User, UserRepositoryFindError>;
     async fn add(&self, user: User) -> Result<(), UserRepositoryAddError>;
 }
 
@@ -20,6 +20,16 @@ pub enum UserRepositoryAddError {
     DuplicateDiscriminator,
     #[error("Duplicate email")]
     DuplicateEmail,
+    #[error("Other error")]
+    OtherError,
+}
+
+#[derive(Error, Debug)]
+pub enum UserRepositoryFindError {
+    #[error("User not found")]
+    NotFound,
+    #[error("Deserialize error")]
+    DeserializeError,
     #[error("Other error")]
     OtherError,
 }

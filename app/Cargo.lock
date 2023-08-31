@@ -1747,7 +1747,6 @@ dependencies = [
  "domain",
  "entity",
  "sea-orm",
- "sqlx",
 ]
 
 [[package]]

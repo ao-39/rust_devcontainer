@@ -18,3 +18,11 @@ impl From<UserName> for String {
         value.0
     }
 }
+
+impl TryFrom<String> for UserName {
+    type Error = String;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        Self::new(value)
+    }
+}

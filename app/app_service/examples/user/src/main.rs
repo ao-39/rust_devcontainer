@@ -6,7 +6,7 @@ use app_service::user::UserApplicationService;
 use domain::{
     entity::User,
     object::{email_address, url, UserDiscriminator, UserName},
-    repository::{IUserRepository, UserRepositoryAddError},
+    repository::{IUserRepository, UserRepositoryAddError, UserRepositoryFindError},
 };
 
 #[tokio::main]
@@ -34,17 +34,17 @@ impl IUserRepository for ExampleUserRepository {
         Ok(())
     }
 
-    fn find_by_id(
+    async fn find_by_id(
         &self,
         _user_id: domain::object::rusty_ulid::Ulid,
-    ) -> Result<domain::entity::User, Box<dyn std::error::Error>> {
+    ) -> Result<domain::entity::User, UserRepositoryFindError> {
         todo!()
     }
 
-    fn find_by_discriminator(
+    async fn find_by_discriminator(
         &self,
         _discriminator: domain::object::UserDiscriminator,
-    ) -> Result<domain::entity::User, Box<dyn std::error::Error>> {
+    ) -> Result<domain::entity::User, UserRepositoryFindError> {
         todo!()
     }
 }
