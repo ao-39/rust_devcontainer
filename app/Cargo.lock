@@ -735,8 +735,10 @@ dependencies = [
 name = "entity"
 version = "0.1.0"
 dependencies = [
+ "domain",
  "sea-orm",
  "serde",
+ "sqlx",
 ]
 
 [[package]]

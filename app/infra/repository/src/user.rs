@@ -1,7 +1,8 @@
 use async_trait::async_trait;
 use domain::repository::{IUserRepository, UserRepositoryAddError};
 
-use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr, Set};
+use entity::implementations::prelude::DbErrUtils;
+use sea_orm::{ActiveModelTrait, DatabaseConnection};
 
 pub struct UserRepository {
     db: DatabaseConnection,
@@ -23,22 +24,12 @@ impl IUserRepository for UserRepository {
     }
 
     async fn add(&self, user: domain::entity::User) -> Result<(), UserRepositoryAddError> {
-        let res = entity::user::ActiveModel {
-            id: Set(user.id.to_string()),
-            discriminator: Set(user.discriminator.into()),
-            name: Set(user.name.into()),
-            email: Set(user.email.as_str().to_owned()),
-            web_page: Set(user.web_page.map(|url| url.to_string())),
-            created_at: Set(user.created_at.into()),
-            updated_at: Set(user.updated_at.into()),
-        }
-        .insert(&self.db)
-        .await;
+        let res = entity::user::ActiveModel::from(user).insert(&self.db).await;
 
         match res {
             Ok(_) => Ok(()),
             Err(err) => {
-                let constrint = get_db_constrint_err(&err);
+                let constrint = err.get_db_constrint_err();
                 match constrint {
                     Some(constrint) => match constrint.as_str() {
                         "user_discriminator_key" => {
@@ -57,18 +48,5 @@ impl IUserRepository for UserRepository {
 impl UserRepository {
     pub fn new(db: DatabaseConnection) -> Self {
         Self { db }
-    }
-}
-
-fn get_db_constrint_err(err: &DbErr) -> Option<String> {
-    match err {
-        sea_orm::error::DbErr::Query(runtime_err) => match runtime_err {
-            sea_orm::error::RuntimeErr::SqlxError(sqlx_err) => match sqlx_err {
-                sqlx::error::Error::Database(db_err) => db_err.constraint().map(|s| s.to_owned()),
-                _ => None,
-            },
-            _ => None,
-        },
-        _ => None,
     }
 }
