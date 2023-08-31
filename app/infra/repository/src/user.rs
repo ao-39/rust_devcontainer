@@ -1,6 +1,7 @@
 use async_trait::async_trait;
-use domain::repository::IUserRepository;
-use sea_orm::{ActiveModelTrait, DatabaseConnection, Set};
+use domain::repository::{IUserRepository, UserRepositoryAddError};
+
+use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr, Set};
 
 pub struct UserRepository {
     db: DatabaseConnection,
@@ -21,8 +22,8 @@ impl IUserRepository for UserRepository {
         todo!()
     }
 
-    async fn add(&self, user: domain::entity::User) -> Result<(), Box<dyn std::error::Error>> {
-        entity::user::ActiveModel {
+    async fn add(&self, user: domain::entity::User) -> Result<(), UserRepositoryAddError> {
+        let res = entity::user::ActiveModel {
             id: Set(user.id.to_string()),
             discriminator: Set(user.discriminator.into()),
             name: Set(user.name.into()),
@@ -32,13 +33,44 @@ impl IUserRepository for UserRepository {
             updated_at: Set(user.updated_at.into()),
         }
         .insert(&self.db)
-        .await?;
-        Ok(())
+        .await;
+
+        match res {
+            Ok(_) => Ok(()),
+            Err(err) => {
+                let constrint = get_db_constrint_err(&err);
+                match constrint {
+                    Some(constrint) => match constrint.as_str() {
+                        "user_discriminator_key" => Err(
+                            UserRepositoryAddError::DuplicateDiscriminator(Box::new(err)),
+                        ),
+                        "user_email_key" => {
+                            Err(UserRepositoryAddError::DuplicateEmail(Box::new(err)))
+                        }
+                        _ => Err(UserRepositoryAddError::OtherError(Box::new(err))),
+                    },
+                    None => Err(UserRepositoryAddError::OtherError(Box::new(err))),
+                }
+            }
+        }
     }
 }
 
 impl UserRepository {
     pub fn new(db: DatabaseConnection) -> Self {
         Self { db }
+    }
+}
+
+fn get_db_constrint_err(err: &DbErr) -> Option<String> {
+    match err {
+        sea_orm::error::DbErr::Query(runtime_err) => match runtime_err {
+            sea_orm::error::RuntimeErr::SqlxError(sqlx_err) => match sqlx_err {
+                sqlx::error::Error::Database(db_err) => db_err.constraint().map(|s| s.to_owned()),
+                _ => None,
+            },
+            _ => None,
+        },
+        _ => None,
     }
 }

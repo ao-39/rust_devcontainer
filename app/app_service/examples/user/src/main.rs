@@ -6,7 +6,7 @@ use app_service::user::UserApplicationService;
 use domain::{
     entity::User,
     object::{email_address, url, UserDiscriminator, UserName},
-    repository::IUserRepository,
+    repository::{IUserRepository, UserRepositoryAddError},
 };
 
 #[tokio::main]
@@ -29,7 +29,7 @@ struct ExampleUserRepository;
 
 #[async_trait]
 impl IUserRepository for ExampleUserRepository {
-    async fn add(&self, user: User) -> Result<(), Box<dyn std::error::Error>> {
+    async fn add(&self, user: User) -> Result<(), UserRepositoryAddError> {
         println!("add user: {:?}", user);
         Ok(())
     }

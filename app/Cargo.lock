@@ -702,6 +702,7 @@ dependencies = [
  "regex",
  "rusty_ulid",
  "serde",
+ "thiserror",
  "tracing",
  "url",
 ]
@@ -1744,6 +1745,7 @@ dependencies = [
  "domain",
  "entity",
  "sea-orm",
+ "sqlx",
 ]
 
 [[package]]

@@ -1,5 +1,6 @@
 use async_trait::async_trait;
 use rusty_ulid::Ulid;
+use thiserror::Error;
 
 use crate::{entity::User, object::UserDiscriminator};
 
@@ -10,5 +11,15 @@ pub trait IUserRepository {
         &self,
         discriminator: UserDiscriminator,
     ) -> Result<User, Box<dyn std::error::Error>>;
-    async fn add(&self, user: User) -> Result<(), Box<dyn std::error::Error>>;
+    async fn add(&self, user: User) -> Result<(), UserRepositoryAddError>;
+}
+
+#[derive(Error, Debug)]
+pub enum UserRepositoryAddError {
+    #[error("Duplicate discriminator")]
+    DuplicateDiscriminator(Box<dyn std::error::Error>),
+    #[error("Duplicate email")]
+    DuplicateEmail(Box<dyn std::error::Error>),
+    #[error("Other error")]
+    OtherError(Box<dyn std::error::Error>),
 }

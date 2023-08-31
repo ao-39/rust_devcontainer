@@ -1,2 +1,2 @@
 mod user;
-pub use user::IUserRepository;
+pub use user::{IUserRepository, UserRepositoryAddError};

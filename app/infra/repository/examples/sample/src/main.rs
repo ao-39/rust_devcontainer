@@ -15,7 +15,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let user_repository = UserRepository::new(db.clone());
     let user = domain::entity::User::new(
         rusty_ulid::Ulid::generate(),
-        UserDiscriminator::new("miku".to_string())?,
+        UserDiscriminator::new("miku1".to_string())?,
         UserName::new("初音ミク".to_string())?,
         email_address::EmailAddress::from_str("example@example.com")?,
         Some(url::Url::parse("https://example.com")?),
