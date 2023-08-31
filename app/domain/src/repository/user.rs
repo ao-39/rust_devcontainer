@@ -17,9 +17,9 @@ pub trait IUserRepository {
 #[derive(Error, Debug)]
 pub enum UserRepositoryAddError {
     #[error("Duplicate discriminator")]
-    DuplicateDiscriminator(Box<dyn std::error::Error>),
+    DuplicateDiscriminator,
     #[error("Duplicate email")]
-    DuplicateEmail(Box<dyn std::error::Error>),
+    DuplicateEmail,
     #[error("Other error")]
-    OtherError(Box<dyn std::error::Error>),
+    OtherError,
 }

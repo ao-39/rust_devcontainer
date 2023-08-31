@@ -41,15 +41,13 @@ impl IUserRepository for UserRepository {
                 let constrint = get_db_constrint_err(&err);
                 match constrint {
                     Some(constrint) => match constrint.as_str() {
-                        "user_discriminator_key" => Err(
-                            UserRepositoryAddError::DuplicateDiscriminator(Box::new(err)),
-                        ),
-                        "user_email_key" => {
-                            Err(UserRepositoryAddError::DuplicateEmail(Box::new(err)))
+                        "user_discriminator_key" => {
+                            Err(UserRepositoryAddError::DuplicateDiscriminator)
                         }
-                        _ => Err(UserRepositoryAddError::OtherError(Box::new(err))),
+                        "user_email_key" => Err(UserRepositoryAddError::DuplicateEmail),
+                        _ => Err(UserRepositoryAddError::OtherError),
                     },
-                    None => Err(UserRepositoryAddError::OtherError(Box::new(err))),
+                    None => Err(UserRepositoryAddError::OtherError),
                 }
             }
         }
