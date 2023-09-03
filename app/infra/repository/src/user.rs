@@ -90,47 +90,54 @@ impl IUserRepository for UserRepository {
         &self,
         discriminator: UserDiscriminator,
     ) -> Result<(), domain::repository::UserRepositoryDeleteError> {
-        todo!()
-        // let res = entity::user::Entity::find()
-        //     .filter(entity::user::Column::Discriminator.eq(Into::<String>::into(discriminator)))
-        //     .one(&self.db)
-        //     .await;
+        let res = entity::user::Entity::find()
+            .filter(entity::user::Column::Discriminator.eq(Into::<String>::into(discriminator)))
+            .one(&self.db)
+            .await;
 
-        // match res {
-        //     Err(_) => Err(domain::repository::UserRepositoryDeleteError::OtherError),
-        //     Ok(None) => Err(domain::repository::UserRepositoryDeleteError::NotFound),
-        //     Ok(Some(user)) => {
-        //         let res = user.delete(&self.db).await;
+        match res {
+            Err(_) => Err(domain::repository::UserRepositoryDeleteError::OtherError),
+            Ok(None) => Err(domain::repository::UserRepositoryDeleteError::NotFound),
+            Ok(Some(user)) => {
+                let res = user.delete(&self.db).await;
 
-        //         match res {
-        //             Ok(_) => Ok(()),
-        //             Err(_) => Err(domain::repository::UserRepositoryDeleteError::OtherError),
-        //         }
-        //     }
-        // }
+                match res {
+                    Ok(_) => Ok(()),
+                    Err(_) => Err(domain::repository::UserRepositoryDeleteError::OtherError),
+                }
+            }
+        }
     }
 
     async fn update(
         &self,
         user: User,
     ) -> Result<(), domain::repository::UserRepositoryUpdateError> {
-        todo!()
-        // let res = entity::user::Entity::find_by_id(user.id.to_string())
-        //     .one(&self.db)
-        //     .await;
+        let res = entity::user::Entity::find_by_id(user.id.to_string())
+            .one(&self.db)
+            .await;
 
-        // match res {
-        //     Err(_) => Err(domain::repository::UserRepositoryUpdateError::OtherError),
-        //     Ok(None) => Err(domain::repository::UserRepositoryUpdateError::NotFound),
-        //     Ok(Some(user)) => {
-        //         let res = user.update(&self.db).await;
+        match res {
+            Err(_) => Err(domain::repository::UserRepositoryUpdateError::OtherError),
+            Ok(None) => Err(domain::repository::UserRepositoryUpdateError::NotFound),
+            Ok(Some(user)) => {
+                let res = Into::<entity::user::ActiveModel>::into(user)
+                    .update(&self.db)
+                    .await;
 
-        //         match res {
-        //             Ok(_) => Ok(()),
-        //             Err(_) => Err(domain::repository::UserRepositoryUpdateError::OtherError),
-        //         }
-        //     }
-        // }
+                match res {
+                    Ok(_) => Ok(()),
+                    Err(e) => match e.get_db_constrint_err() {
+                        Some(constrint) => match constrint.as_str() {
+                            "user_discriminator_key" => Err(domain::repository::UserRepositoryUpdateError::DuplicateDiscriminator),
+                            "user_email_key" => Err(domain::repository::UserRepositoryUpdateError::DuplicateEmail),
+                            _ => Err(domain::repository::UserRepositoryUpdateError::OtherError),
+                        },
+                        None => Err(domain::repository::UserRepositoryUpdateError::OtherError),
+                    }
+                }
+            }
+        }
     }
 }
 
