@@ -1,3 +1,4 @@
+mod find_discriminator;
 mod register;
 use std::sync::Arc;
 
