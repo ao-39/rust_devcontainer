@@ -8,6 +8,8 @@ use domain::{
     repository::IUserRepository,
 };
 
+use crate::interface::user::{IUserAppService, UserRegisterError};
+
 pub struct UserApplicationService<T: IUserRepository + Sync + Send> {
     user_repository: T,
 }
@@ -18,17 +20,6 @@ impl<T: IUserRepository + Sync + Send> UserApplicationService<T> {
             user_repository: user_repostitory,
         }
     }
-}
-
-#[async_trait]
-pub trait IUserAppService {
-    async fn register(
-        &self,
-        discriminator: UserDiscriminator,
-        name: UserName,
-        email: EmailAddress,
-        web_page: Option<Url>,
-    ) -> Result<(), UserRegisterError>;
 }
 
 #[async_trait]
@@ -59,10 +50,4 @@ impl<T: IUserRepository + Sync + Send> IUserAppService for UserApplicationServic
             Ok(_) => Ok(()),
         }
     }
-}
-
-pub enum UserRegisterError {
-    DuplicateDiscriminator,
-    DuplicateEmail,
-    OtherError,
 }

@@ -1,8 +1,9 @@
+use app_service::{
+    implementations::user::UserApplicationService, interface::user::IUserAppService,
+};
 use async_trait::async_trait;
 use std::str::FromStr;
 
-use app_service::user::user_application_service::IUserAppService;
-use app_service::user::UserApplicationService;
 use domain::{
     entity::User,
     object::{email_address, url, UserDiscriminator, UserName},

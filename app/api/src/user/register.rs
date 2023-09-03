@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
-use axum::{http::StatusCode, response::IntoResponse, Error, Extension, Json};
+use axum::{http::StatusCode, response::IntoResponse, Extension, Json};
 
-use app_service::user::{IUserAppService, UserRegisterError};
+use app_service::interface::user::{IUserAppService, UserRegisterError};
 use serde::{Deserialize, Serialize};
 
 pub async fn user_register<T>(

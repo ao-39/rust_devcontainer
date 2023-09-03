@@ -1,7 +1,7 @@
 mod register;
 use std::sync::Arc;
 
-use app_service::user::IUserAppService;
+use app_service::interface::user::IUserAppService;
 use axum::{routing::post, Extension, Router};
 use register::user_register;
 

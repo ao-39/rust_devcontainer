@@ -1,4 +1,4 @@
-use app_service::user::UserApplicationService;
+use app_service::implementations::user::UserApplicationService;
 use sea_orm::Database;
 use tracing_subscriber::{fmt::time::LocalTime, EnvFilter};
 
