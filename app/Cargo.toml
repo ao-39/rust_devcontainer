@@ -11,3 +11,7 @@ api = { path = "./api" }
 dotenvy = "0.15.7"
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3.17", features = ["std", "env-filter", "time", "local-time"]}
+tokio = { version = "1", features = ["full"] }
+app_service = { path = "./app_service" }
+repository = { path = "./infra/repository" }
+sea-orm = { version = "0.12", features = [ "sqlx-postgres", "runtime-tokio-rustls" ] }

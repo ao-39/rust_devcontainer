@@ -28,7 +28,7 @@ pub trait IUserApplicationService {
         name: UserName,
         email: EmailAddress,
         web_page: Option<Url>,
-    ) -> Result<(), Box<dyn std::error::Error>>;
+    ) -> Result<(), UserRegisterError>;
 }
 
 #[async_trait]
@@ -39,18 +39,30 @@ impl<T: IUserRepository + Sync + Send> IUserApplicationService for UserApplicati
         name: UserName,
         email: EmailAddress,
         web_page: Option<Url>,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<(), UserRegisterError> {
         let ulid = Ulid::generate();
         let now = Local::now();
         let user = User::new(ulid, discriminator, name, email, web_page, now, now);
 
-        self.user_repository.add(user).await?;
-        Ok(())
+        let res = self.user_repository.add(user).await;
+
+        match res {
+            Err(err) => match err {
+                domain::repository::UserRepositoryAddError::DuplicateDiscriminator => {
+                    Err(UserRegisterError::DuplicateDiscriminator)
+                }
+                domain::repository::UserRepositoryAddError::DuplicateEmail => {
+                    Err(UserRegisterError::DuplicateEmail)
+                }
+                _ => Err(UserRegisterError::OtherError),
+            },
+            Ok(_) => Ok(()),
+        }
     }
 }
 
 pub enum UserRegisterError {
     DuplicateDiscriminator,
-    DuplicateEmailAddress,
+    DuplicateEmail,
     OtherError,
 }

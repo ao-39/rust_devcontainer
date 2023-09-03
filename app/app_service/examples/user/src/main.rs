@@ -11,16 +11,16 @@ use domain::{
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let user_application_service = UserApplicationService::new(ExampleUserRepository);
+    // let user_application_service = UserApplicationService::new(ExampleUserRepository);
 
-    user_application_service
-        .register(
-            UserDiscriminator::new("john".to_string())?,
-            UserName::new("John Doe".to_string())?,
-            email_address::EmailAddress::from_str("example@example.com")?,
-            Some(url::Url::parse("https://example.com")?),
-        )
-        .await?;
+    // user_application_service
+    //     .register(
+    //         UserDiscriminator::new("john".to_string())?,
+    //         UserName::new("John Doe".to_string())?,
+    //         email_address::EmailAddress::from_str("example@example.com")?,
+    //         Some(url::Url::parse("https://example.com")?),
+    //     )
+    //     .await;
 
     Ok(())
 }
