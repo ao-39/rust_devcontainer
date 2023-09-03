@@ -3,10 +3,10 @@ use std::net::SocketAddr;
 use axum::{routing::get, Router};
 use tracing::info;
 mod user;
-use app_service::user::IUserApplicationService;
+use app_service::user::IUserAppService;
 
 pub async fn run(
-    user_app_service: impl IUserApplicationService + Send + Sync + 'static,
+    user_app_service: impl IUserAppService + Send + Sync + 'static,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let user_router = user::user_router(user_app_service);
 

@@ -21,7 +21,7 @@ impl<T: IUserRepository + Sync + Send> UserApplicationService<T> {
 }
 
 #[async_trait]
-pub trait IUserApplicationService {
+pub trait IUserAppService {
     async fn register(
         &self,
         discriminator: UserDiscriminator,
@@ -32,7 +32,7 @@ pub trait IUserApplicationService {
 }
 
 #[async_trait]
-impl<T: IUserRepository + Sync + Send> IUserApplicationService for UserApplicationService<T> {
+impl<T: IUserRepository + Sync + Send> IUserAppService for UserApplicationService<T> {
     async fn register(
         &self,
         discriminator: UserDiscriminator,

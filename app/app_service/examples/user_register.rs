@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use std::str::FromStr;
 
-use app_service::user::user_application_service::IUserApplicationService;
+use app_service::user::user_application_service::IUserAppService;
 use app_service::user::UserApplicationService;
 use domain::{
     entity::User,

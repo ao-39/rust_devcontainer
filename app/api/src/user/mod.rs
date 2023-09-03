@@ -1,13 +1,13 @@
 mod register;
 use std::sync::Arc;
 
-use app_service::user::IUserApplicationService;
+use app_service::user::IUserAppService;
 use axum::{routing::post, Extension, Router};
 use register::user_register;
 
 pub fn user_router<T>(user_app_service: T) -> Router
 where
-    T: IUserApplicationService + Send + Sync + 'static,
+    T: IUserAppService + Send + Sync + 'static,
 {
     Router::new()
         .route("/", post(user_register::<T>))

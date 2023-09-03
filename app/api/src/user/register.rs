@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use axum::{http::StatusCode, response::IntoResponse, Error, Extension, Json};
 
-use app_service::user::{IUserApplicationService, UserRegisterError};
+use app_service::user::{IUserAppService, UserRegisterError};
 use serde::{Deserialize, Serialize};
 
 pub async fn user_register<T>(
@@ -10,7 +10,7 @@ pub async fn user_register<T>(
     Json(payload): Json<UserRegister>,
 ) -> Result<StatusCode, impl IntoResponse>
 where
-    T: IUserApplicationService + Send + Sync + 'static,
+    T: IUserAppService + Send + Sync + 'static,
 {
     let res = user_app_service
         .register(
