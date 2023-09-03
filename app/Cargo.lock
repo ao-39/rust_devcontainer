@@ -140,7 +140,7 @@ name = "app"
 version = "0.1.0"
 dependencies = [
  "api",
- "app_service",
+ "app_service_impl",
  "dotenvy",
  "repository",
  "sea-orm",
@@ -153,6 +153,15 @@ dependencies = [
 name = "app_service"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
+ "domain",
+]
+
+[[package]]
+name = "app_service_impl"
+version = "0.1.0"
+dependencies = [
+ "app_service",
  "async-trait",
  "domain",
  "tokio",

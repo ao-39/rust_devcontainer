@@ -1,3 +1,4 @@
+use app_service::user::{IUserAppService, UserRegisterError};
 use async_trait::async_trait;
 use domain::{
     entity::User,
@@ -7,8 +8,6 @@ use domain::{
     },
     repository::IUserRepository,
 };
-
-use crate::interface::user::{IUserAppService, UserRegisterError};
 
 pub struct UserApplicationService<T: IUserRepository + Sync + Send> {
     user_repository: T,

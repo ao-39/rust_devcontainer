@@ -5,9 +5,6 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dev-dependencies]
-tokio = { version = "1", features = ["full"] }
-
 [dependencies]
-domain = { path = "../domain" }
+domain = { path = "../../domain" }
 async-trait = "0.1.73"

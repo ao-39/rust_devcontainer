@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [workspace]
-members = [".", "domain", "api", "app_service", "infra/migration", "infra/entity", "infra/repository"]
+members = [".", "domain", "api", "app_service/app_service", "app_service/app_service_impl", "infra/migration", "infra/entity", "infra/repository"]
 
 [dependencies]
 api = { path = "./api" }
@@ -12,6 +12,6 @@ dotenvy = "0.15.7"
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3.17", features = ["std", "env-filter", "time", "local-time"]}
 tokio = { version = "1", features = ["full"] }
-app_service = { path = "./app_service" }
+app_service_impl = { path = "./app_service/app_service_impl" }
 repository = { path = "./infra/repository" }
 sea-orm = { version = "0.12", features = [ "sqlx-postgres", "runtime-tokio-rustls" ] }

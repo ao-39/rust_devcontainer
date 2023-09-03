@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 domain = { path = "../domain" }
-app_service = { path = "../app_service" }
+app_service = { path = "../app_service/app_service" }
 axum = { version = "0.6.20", features = ["multipart"] }
 tracing = { version = "0.1.37" }
 serde = { version = "1.0", features = ["derive"] }

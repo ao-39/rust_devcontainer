@@ -1,6 +1,5 @@
-use app_service::{
-    implementations::user::UserApplicationService, interface::user::IUserAppService,
-};
+use app_service::user::IUserAppService;
+use app_service_impl::user::UserApplicationService;
 use async_trait::async_trait;
 use std::str::FromStr;
 
