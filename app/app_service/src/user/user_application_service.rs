@@ -12,46 +12,45 @@ pub struct UserApplicationService<T: IUserRepository + Sync + Send> {
     user_repository: T,
 }
 
-#[async_trait]
-pub trait IUserApplicationService<T: IUserRepository + Sync + Send> {
-    fn new(user_repostitory: T) -> Self;
-
-    async fn register(
-        &self,
-        discriminator: UserDiscriminator,
-        name: UserName,
-        email: EmailAddress,
-        web_page: Option<Url>,
-    ) -> Result<User, Box<dyn std::error::Error>>;
-}
-
-#[async_trait]
-impl<T: IUserRepository + Sync + Send> IUserApplicationService<T> for UserApplicationService<T> {
-    fn new(user_repostitory: T) -> Self {
+impl<T: IUserRepository + Sync + Send> UserApplicationService<T> {
+    pub fn new(user_repostitory: T) -> Self {
         Self {
             user_repository: user_repostitory,
         }
     }
+}
 
+#[async_trait]
+pub trait IUserApplicationService {
     async fn register(
         &self,
         discriminator: UserDiscriminator,
         name: UserName,
         email: EmailAddress,
         web_page: Option<Url>,
-    ) -> Result<User, Box<dyn std::error::Error>> {
-        let ulid = Ulid::generate();
-        let user = User::new(
-            ulid.clone(),
-            discriminator,
-            name,
-            email,
-            web_page,
-            Local::now(),
-            Local::now(),
-        );
+    ) -> Result<(), Box<dyn std::error::Error>>;
+}
 
-        self.user_repository.add(user.clone()).await?;
-        Ok(user)
+#[async_trait]
+impl<T: IUserRepository + Sync + Send> IUserApplicationService for UserApplicationService<T> {
+    async fn register(
+        &self,
+        discriminator: UserDiscriminator,
+        name: UserName,
+        email: EmailAddress,
+        web_page: Option<Url>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let ulid = Ulid::generate();
+        let now = Local::now();
+        let user = User::new(ulid, discriminator, name, email, web_page, now, now);
+
+        self.user_repository.add(user).await?;
+        Ok(())
     }
+}
+
+pub enum UserRegisterError {
+    DuplicateDiscriminator,
+    DuplicateEmailAddress,
+    OtherError,
 }
