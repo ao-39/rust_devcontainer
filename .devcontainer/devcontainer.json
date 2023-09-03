@@ -21,8 +21,7 @@
         "app/app_service/examples/user/Cargo.toml",
         "app/infra/migration/Cargo.toml",
         "app/infra/entity/Cargo.toml",
-        "app/infra/repository/Cargo.toml",
-        "app/infra/repository/examples/sample/Cargo.toml"
+        "app/infra/repository/Cargo.toml"
       ]
     }
   }

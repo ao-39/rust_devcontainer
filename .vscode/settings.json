@@ -4,11 +4,9 @@
     "app/api/Cargo.toml",
     "app/domain/Cargo.toml",
     "app/app_service/Cargo.toml",
-    "app/app_service/examples/user/Cargo.toml",
     "app/infra/migration/Cargo.toml",
     "app/infra/entity/Cargo.toml",
-    "app/infra/repository/Cargo.toml",
-    "app/infra/repository/examples/sample/Cargo.toml"
+    "app/infra/repository/Cargo.toml"
   ],
   "rust-analyzer.showUnlinkedFileNotification": false
 }
