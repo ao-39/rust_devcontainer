@@ -1,5 +1,6 @@
 use async_trait::async_trait;
 use domain::{
+    entity::User,
     object::{rusty_ulid, UserDiscriminator},
     repository::{IUserRepository, UserRepositoryAddError, UserRepositoryFindError},
 };
@@ -14,10 +15,7 @@ pub struct UserRepository {
 
 #[async_trait]
 impl IUserRepository for UserRepository {
-    async fn find_by_id(
-        &self,
-        user_id: rusty_ulid::Ulid,
-    ) -> Result<domain::entity::User, UserRepositoryFindError> {
+    async fn find_by_id(&self, user_id: rusty_ulid::Ulid) -> Result<User, UserRepositoryFindError> {
         let res = entity::user::Entity::find_by_id(user_id.to_string())
             .one(&self.db)
             .await;
@@ -34,7 +32,7 @@ impl IUserRepository for UserRepository {
     async fn find_by_discriminator(
         &self,
         discriminator: UserDiscriminator,
-    ) -> Result<domain::entity::User, UserRepositoryFindError> {
+    ) -> Result<User, UserRepositoryFindError> {
         let res = entity::user::Entity::find()
             .filter(entity::user::Column::Discriminator.eq(Into::<String>::into(discriminator)))
             .one(&self.db)
@@ -49,7 +47,25 @@ impl IUserRepository for UserRepository {
         }
     }
 
-    async fn add(&self, user: domain::entity::User) -> Result<(), UserRepositoryAddError> {
+    async fn find_by_email(
+        &self,
+        email: domain::object::email_address::EmailAddress,
+    ) -> Result<User, UserRepositoryFindError> {
+        let res = entity::user::Entity::find()
+            .filter(entity::user::Column::Email.eq(email.to_string()))
+            .one(&self.db)
+            .await;
+
+        match res {
+            Err(_) => Err(UserRepositoryFindError::OtherError),
+            Ok(None) => Err(UserRepositoryFindError::NotFound),
+            Ok(Some(user)) => user
+                .try_into()
+                .map_err(|_| UserRepositoryFindError::DeserializeError),
+        }
+    }
+
+    async fn add(&self, user: User) -> Result<(), UserRepositoryAddError> {
         let res = entity::user::ActiveModel::from(user).insert(&self.db).await;
 
         match res {
@@ -68,6 +84,53 @@ impl IUserRepository for UserRepository {
                 }
             }
         }
+    }
+
+    async fn delete(
+        &self,
+        discriminator: UserDiscriminator,
+    ) -> Result<(), domain::repository::UserRepositoryDeleteError> {
+        todo!()
+        // let res = entity::user::Entity::find()
+        //     .filter(entity::user::Column::Discriminator.eq(Into::<String>::into(discriminator)))
+        //     .one(&self.db)
+        //     .await;
+
+        // match res {
+        //     Err(_) => Err(domain::repository::UserRepositoryDeleteError::OtherError),
+        //     Ok(None) => Err(domain::repository::UserRepositoryDeleteError::NotFound),
+        //     Ok(Some(user)) => {
+        //         let res = user.delete(&self.db).await;
+
+        //         match res {
+        //             Ok(_) => Ok(()),
+        //             Err(_) => Err(domain::repository::UserRepositoryDeleteError::OtherError),
+        //         }
+        //     }
+        // }
+    }
+
+    async fn update(
+        &self,
+        user: User,
+    ) -> Result<(), domain::repository::UserRepositoryUpdateError> {
+        todo!()
+        // let res = entity::user::Entity::find_by_id(user.id.to_string())
+        //     .one(&self.db)
+        //     .await;
+
+        // match res {
+        //     Err(_) => Err(domain::repository::UserRepositoryUpdateError::OtherError),
+        //     Ok(None) => Err(domain::repository::UserRepositoryUpdateError::NotFound),
+        //     Ok(Some(user)) => {
+        //         let res = user.update(&self.db).await;
+
+        //         match res {
+        //             Ok(_) => Ok(()),
+        //             Err(_) => Err(domain::repository::UserRepositoryUpdateError::OtherError),
+        //         }
+        //     }
+        // }
     }
 }
 
