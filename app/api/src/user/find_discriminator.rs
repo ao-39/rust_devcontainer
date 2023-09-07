@@ -1,22 +1,22 @@
 use std::sync::Arc;
 
-use axum::{http::StatusCode, response::IntoResponse, Extension, Json};
+use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension, Json};
 
 use app_service_interface::object::{
     email_address::EmailAddress, url::Url, UserDiscriminator, UserName,
 };
 use app_service_interface::user::{IUserAppService, UserFindError};
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 pub async fn find_by_discriminator<T>(
     Extension(user_app_service): Extension<Arc<T>>,
-    Json(payload): Json<UserFindByDiscriminator>,
+    Path(user_discriminator): Path<UserDiscriminator>,
 ) -> Result<impl IntoResponse, impl IntoResponse>
 where
     T: IUserAppService + Send + Sync + 'static,
 {
     let res = user_app_service
-        .find_by_discriminator(payload.discriminator)
+        .find_by_discriminator(user_discriminator)
         .await;
 
     match res {
@@ -41,11 +41,6 @@ where
             )),
         },
     }
-}
-
-#[derive(Deserialize)]
-pub struct UserFindByDiscriminator {
-    pub discriminator: UserDiscriminator,
 }
 
 #[derive(Serialize)]
