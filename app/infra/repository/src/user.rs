@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use domain::{
     entity::User,
-    object::{email_address, rusty_ulid, UserDiscriminator},
+    object::{chrono, email_address, rusty_ulid, UserDiscriminator},
     repository::{
         IUserRepository, UserRepositoryAddError, UserRepositoryDeleteError,
         UserRepositoryFindError, UserRepositoryUpdateError, UserUpdateOperator,
@@ -9,7 +9,7 @@ use domain::{
 };
 
 use entity::implementations::prelude::DbErrUtils;
-use sea_orm::{prelude::*, TransactionTrait};
+use sea_orm::{prelude::*, Set, TransactionTrait};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 
 pub struct UserRepository {
@@ -131,25 +131,25 @@ impl IUserRepository for UserRepository {
         match res_find_user {
             Err(_) => Err(UserRepositoryUpdateError::OtherError),
             Ok(None) => Err(UserRepositoryUpdateError::NotFound),
-            Ok(Some(mut found_user)) => {
+            Ok(Some(found_user)) => {
+                let mut user_active_model = Into::<entity::user::ActiveModel>::into(found_user);
                 match update_operator {
                     UserUpdateOperator::Discriminator(discriminator) => {
-                        found_user.discriminator = discriminator.into();
+                        user_active_model.discriminator = Set(discriminator.into());
                     }
                     UserUpdateOperator::Name(name) => {
-                        found_user.name = name.into();
+                        user_active_model.name = Set(name.into());
                     }
                     UserUpdateOperator::Email(email) => {
-                        found_user.email = email.into();
+                        user_active_model.email = Set(email.into());
                     }
                     UserUpdateOperator::WebPage(web_page) => {
-                        found_user.web_page = web_page.map(Into::into);
+                        user_active_model.web_page = Set(web_page.map(Into::into));
                     }
                 }
+                user_active_model.updated_at = Set(chrono::Local::now().into());
 
-                let res_update = Into::<entity::user::ActiveModel>::into(found_user)
-                    .update(&txn)
-                    .await;
+                let res_update = user_active_model.update(&txn).await;
 
                 let res = match res_update {
                     Ok(_) => Ok(()),
