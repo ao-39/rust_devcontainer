@@ -6,6 +6,7 @@ mod user;
 use app_service_interface::user::IUserAppService;
 
 pub async fn run(
+    addr: SocketAddr,
     user_app_service: impl IUserAppService + Send + Sync + 'static,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let user_router = user::user_router(user_app_service);
@@ -13,8 +14,6 @@ pub async fn run(
     let app = Router::new()
         .route("/helth", get(helth))
         .nest("/user", user_router);
-
-    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
 
     info!("Listening on {}", addr);
     axum::Server::bind(&addr)

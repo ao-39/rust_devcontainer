@@ -1,3 +1,5 @@
+use std::net::SocketAddr;
+
 use app_service_impl::user::UserApplicationService;
 use sea_orm::Database;
 use tracing_subscriber::{fmt::time::LocalTime, EnvFilter};
@@ -13,10 +15,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         .init();
 
     let db = Database::connect("postgres://postgres:postgres@localhost:5432/db").await?;
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
 
-    api::run(UserApplicationService::new(
-        repository::user::UserRepository::new(db.clone()),
-    ))
+    api::run(
+        addr,
+        UserApplicationService::new(repository::user::UserRepository::new(db.clone())),
+    )
     .await?;
     Ok(())
 }
