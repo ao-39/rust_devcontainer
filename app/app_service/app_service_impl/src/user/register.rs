@@ -1,5 +1,5 @@
 use app_service_interface::user::{
-    IUserAppService, UserDeleteError, UserFindError, UserRegisterError, UserUpdateError,
+    IUserAppService, UserDeleteError, UserDto, UserFindError, UserRegisterError, UserUpdateError,
     UserUpdateOperator,
 };
 use async_trait::async_trait;
@@ -57,7 +57,7 @@ impl<T: IUserRepository + Sync + Send> IUserAppService for UserApplicationServic
     async fn find_by_discriminator(
         &self,
         discriminator: UserDiscriminator,
-    ) -> Result<User, UserFindError> {
+    ) -> Result<UserDto, UserFindError> {
         let res = self
             .user_repository
             .find_by_discriminator(discriminator)
@@ -68,11 +68,11 @@ impl<T: IUserRepository + Sync + Send> IUserAppService for UserApplicationServic
                 UserRepositoryFindError::NotFound => Err(UserFindError::NotFound),
                 _ => Err(UserFindError::OtherError),
             },
-            Ok(user) => Ok(user),
+            Ok(user) => Ok(user.into()),
         }
     }
 
-    async fn find_by_email(&self, email: EmailAddress) -> Result<User, UserFindError> {
+    async fn find_by_email(&self, email: EmailAddress) -> Result<UserDto, UserFindError> {
         let res = self.user_repository.find_by_email(email).await;
 
         match res {
@@ -80,7 +80,7 @@ impl<T: IUserRepository + Sync + Send> IUserAppService for UserApplicationServic
                 UserRepositoryFindError::NotFound => Err(UserFindError::NotFound),
                 _ => Err(UserFindError::OtherError),
             },
-            Ok(user) => Ok(user),
+            Ok(user) => Ok(user.into()),
         }
     }
 

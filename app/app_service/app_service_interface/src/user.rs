@@ -17,9 +17,9 @@ pub trait IUserAppService {
     async fn find_by_discriminator(
         &self,
         discriminator: UserDiscriminator,
-    ) -> Result<User, UserFindError>;
+    ) -> Result<UserDto, UserFindError>;
 
-    async fn find_by_email(&self, email: EmailAddress) -> Result<User, UserFindError>;
+    async fn find_by_email(&self, email: EmailAddress) -> Result<UserDto, UserFindError>;
 
     async fn delete(&self, discriminator: UserDiscriminator) -> Result<(), UserDeleteError>;
 
@@ -28,6 +28,24 @@ pub trait IUserAppService {
         discriminator: UserDiscriminator,
         update_operator: UserUpdateOperator,
     ) -> Result<(), UserUpdateError>;
+}
+
+pub struct UserDto {
+    pub discriminator: UserDiscriminator,
+    pub name: UserName,
+    pub email: EmailAddress,
+    pub web_page: Option<Url>,
+}
+
+impl From<User> for UserDto {
+    fn from(user: User) -> Self {
+        Self {
+            discriminator: user.discriminator,
+            name: user.name,
+            email: user.email,
+            web_page: user.web_page,
+        }
+    }
 }
 
 pub enum UserRegisterError {
