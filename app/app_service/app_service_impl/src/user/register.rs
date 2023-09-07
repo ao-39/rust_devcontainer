@@ -101,31 +101,10 @@ impl<T: IUserRepository + Sync + Send> IUserAppService for UserApplicationServic
         discriminator: UserDiscriminator,
         update_operator: UserUpdateOperator,
     ) -> Result<(), UserUpdateError> {
-        let mut user = self
+        let res = self
             .user_repository
-            .find_by_discriminator(discriminator)
-            .await
-            .map_err(|err| match err {
-                UserRepositoryFindError::NotFound => UserUpdateError::NotFound,
-                _ => UserUpdateError::OtherError,
-            })?;
-
-        match update_operator {
-            UserUpdateOperator::Discriminator(discriminator) => {
-                user.discriminator = discriminator;
-            }
-            UserUpdateOperator::Name(name) => {
-                user.name = name;
-            }
-            UserUpdateOperator::Email(email) => {
-                user.email = email;
-            }
-            UserUpdateOperator::WebPage(web_page) => {
-                user.web_page = web_page;
-            }
-        }
-
-        let res = self.user_repository.update(user).await;
+            .update(discriminator, update_operator.into())
+            .await;
 
         match res {
             Err(err) => match err {

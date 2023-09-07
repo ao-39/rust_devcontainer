@@ -4,12 +4,12 @@ use domain::{
     object::{email_address, rusty_ulid, UserDiscriminator},
     repository::{
         IUserRepository, UserRepositoryAddError, UserRepositoryDeleteError,
-        UserRepositoryFindError, UserRepositoryUpdateError,
+        UserRepositoryFindError, UserRepositoryUpdateError, UserUpdateOperator,
     },
 };
 
 use entity::implementations::prelude::DbErrUtils;
-use sea_orm::prelude::*;
+use sea_orm::{prelude::*, TransactionTrait};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 
 pub struct UserRepository {
@@ -112,20 +112,46 @@ impl IUserRepository for UserRepository {
         }
     }
 
-    async fn update(&self, user: User) -> Result<(), UserRepositoryUpdateError> {
-        let res = entity::user::Entity::find_by_id(user.id.to_string())
-            .one(&self.db)
+    async fn update(
+        &self,
+        discriminator: UserDiscriminator,
+        update_operator: UserUpdateOperator,
+    ) -> Result<(), UserRepositoryUpdateError> {
+        let txn = self
+            .db
+            .begin()
+            .await
+            .map_err(|_| UserRepositoryUpdateError::OtherError)?;
+
+        let res_find_user = entity::user::Entity::find()
+            .filter(entity::user::Column::Discriminator.eq(Into::<String>::into(discriminator)))
+            .one(&txn)
             .await;
 
-        match res {
+        match res_find_user {
             Err(_) => Err(UserRepositoryUpdateError::OtherError),
             Ok(None) => Err(UserRepositoryUpdateError::NotFound),
-            Ok(Some(found_user)) => {
-                let res = Into::<entity::user::ActiveModel>::into(user)
-                    .update(&self.db)
+            Ok(Some(mut found_user)) => {
+                match update_operator {
+                    UserUpdateOperator::Discriminator(discriminator) => {
+                        found_user.discriminator = discriminator.into();
+                    }
+                    UserUpdateOperator::Name(name) => {
+                        found_user.name = name.into();
+                    }
+                    UserUpdateOperator::Email(email) => {
+                        found_user.email = email.into();
+                    }
+                    UserUpdateOperator::WebPage(web_page) => {
+                        found_user.web_page = web_page.map(Into::into);
+                    }
+                }
+
+                let res_update = Into::<entity::user::ActiveModel>::into(found_user)
+                    .update(&txn)
                     .await;
 
-                match res {
+                let res = match res_update {
                     Ok(_) => Ok(()),
                     Err(e) => match e.get_db_constrint_err() {
                         Some(constrint) => match constrint.as_str() {
@@ -137,6 +163,16 @@ impl IUserRepository for UserRepository {
                         },
                         None => Err(UserRepositoryUpdateError::OtherError),
                     },
+                };
+
+                if res.is_ok() {
+                    txn.commit()
+                        .await
+                        .map_err(|_| UserRepositoryUpdateError::OtherError)
+                } else {
+                    txn.rollback()
+                        .await
+                        .map_err(|_| UserRepositoryUpdateError::OtherError)
                 }
             }
         }

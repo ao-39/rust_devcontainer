@@ -5,9 +5,9 @@ use app_service_interface::object::url::Url;
 use axum::extract::Path;
 use axum::{http::StatusCode, response::IntoResponse, Extension, Json};
 
-use app_service_interface::object::{email_address, url, UserDiscriminator, UserName};
-use app_service_interface::user::{IUserAppService, UserRegisterError, UserUpdateOperator};
-use serde::{Deserialize, Serialize};
+use app_service_interface::object::{UserDiscriminator, UserName};
+use app_service_interface::user::{IUserAppService, UserUpdateOperator};
+use serde::Deserialize;
 
 pub async fn user_update<T>(
     Extension(user_app_service): Extension<Arc<T>>,

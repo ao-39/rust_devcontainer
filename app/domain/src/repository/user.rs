@@ -3,7 +3,10 @@ use email_address::EmailAddress;
 use rusty_ulid::Ulid;
 use thiserror::Error;
 
-use crate::{entity::User, object::UserDiscriminator};
+use crate::{
+    entity::User,
+    object::{url::Url, UserDiscriminator, UserName},
+};
 
 #[async_trait]
 pub trait IUserRepository {
@@ -18,7 +21,11 @@ pub trait IUserRepository {
         &self,
         discriminator: UserDiscriminator,
     ) -> Result<(), UserRepositoryDeleteError>;
-    async fn update(&self, user: User) -> Result<(), UserRepositoryUpdateError>;
+    async fn update(
+        &self,
+        discriminator: UserDiscriminator,
+        update_operator: UserUpdateOperator,
+    ) -> Result<(), UserRepositoryUpdateError>;
 }
 
 #[derive(Error, Debug)]
@@ -59,4 +66,11 @@ pub enum UserRepositoryUpdateError {
     DuplicateEmail,
     #[error("Other error")]
     OtherError,
+}
+
+pub enum UserUpdateOperator {
+    Discriminator(UserDiscriminator),
+    Name(UserName),
+    Email(EmailAddress),
+    WebPage(Option<Url>),
 }

@@ -77,3 +77,20 @@ pub enum UserUpdateOperator {
     Email(EmailAddress),
     WebPage(Option<Url>),
 }
+
+impl From<UserUpdateOperator> for domain::repository::UserUpdateOperator {
+    fn from(value: UserUpdateOperator) -> Self {
+        match value {
+            UserUpdateOperator::Discriminator(discriminator) => {
+                domain::repository::UserUpdateOperator::Discriminator(discriminator)
+            }
+            UserUpdateOperator::Name(name) => domain::repository::UserUpdateOperator::Name(name),
+            UserUpdateOperator::Email(email) => {
+                domain::repository::UserUpdateOperator::Email(email)
+            }
+            UserUpdateOperator::WebPage(web_page) => {
+                domain::repository::UserUpdateOperator::WebPage(web_page)
+            }
+        }
+    }
+}
