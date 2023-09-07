@@ -1,4 +1,4 @@
-use app_service::user::{
+use app_service_interface::user::{
     IUserAppService, UserDeleteError, UserFindError, UserRegisterError, UserUpdateError,
     UserUpdateOperator,
 };

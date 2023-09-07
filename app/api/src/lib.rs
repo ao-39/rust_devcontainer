@@ -3,7 +3,7 @@ use std::net::SocketAddr;
 use axum::{routing::get, Router};
 use tracing::info;
 mod user;
-use app_service::user::IUserAppService;
+use app_service_interface::user::IUserAppService;
 
 pub async fn run(
     user_app_service: impl IUserAppService + Send + Sync + 'static,

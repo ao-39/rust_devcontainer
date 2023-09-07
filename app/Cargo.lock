@@ -128,9 +128,8 @@ dependencies = [
 name = "api"
 version = "0.1.0"
 dependencies = [
- "app_service",
+ "app_service_interface",
  "axum",
- "domain",
  "serde",
  "tracing",
 ]
@@ -150,21 +149,21 @@ dependencies = [
 ]
 
 [[package]]
-name = "app_service"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "domain",
-]
-
-[[package]]
 name = "app_service_impl"
 version = "0.1.0"
 dependencies = [
- "app_service",
+ "app_service_interface",
  "async-trait",
  "domain",
  "tokio",
+]
+
+[[package]]
+name = "app_service_interface"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "domain",
 ]
 
 [[package]]

@@ -2,7 +2,8 @@ use std::sync::Arc;
 
 use axum::{http::StatusCode, response::IntoResponse, Extension, Json};
 
-use app_service::user::{IUserAppService, UserRegisterError};
+use app_service_interface::object::{email_address, url, UserDiscriminator, UserName};
+use app_service_interface::user::{IUserAppService, UserRegisterError};
 use serde::{Deserialize, Serialize};
 
 pub async fn user_register<T>(
@@ -48,11 +49,11 @@ where
 
 #[derive(Deserialize)]
 pub struct UserRegister {
-    discriminator: domain::object::UserDiscriminator,
-    name: domain::object::UserName,
-    email: domain::object::email_address::EmailAddress,
+    discriminator: UserDiscriminator,
+    name: UserName,
+    email: email_address::EmailAddress,
     #[serde(rename = "webPage")]
-    web_page: Option<domain::object::url::Url>,
+    web_page: Option<url::Url>,
 }
 
 #[derive(Serialize)]

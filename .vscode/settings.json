@@ -3,7 +3,7 @@
     "app/Cargo.toml",
     "app/api/Cargo.toml",
     "app/domain/Cargo.toml",
-    "app/app_service/app_service/Cargo.toml",
+    "app/app_service/app_service_interface/Cargo.toml",
     "app/app_service/app_service_impl/Cargo.toml",
     "app/infra/migration/Cargo.toml",
     "app/infra/entity/Cargo.toml",

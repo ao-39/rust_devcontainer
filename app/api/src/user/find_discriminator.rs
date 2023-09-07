@@ -2,8 +2,10 @@ use std::sync::Arc;
 
 use axum::{http::StatusCode, response::IntoResponse, Extension, Json};
 
-use app_service::user::{IUserAppService, UserFindError};
-use domain::object::{email_address::EmailAddress, url::Url, UserDiscriminator, UserName};
+use app_service_interface::object::{
+    email_address::EmailAddress, url::Url, UserDiscriminator, UserName,
+};
+use app_service_interface::user::{IUserAppService, UserFindError};
 use serde::{Deserialize, Serialize};
 
 pub async fn find_by_discriminator<T>(
